@@ -30,6 +30,21 @@ string extractFieldValue(const string& input, const string& fieldName) {
     }
 }
 
+string extractFieldValueBetter(const string& input, const string& fieldName)
+{
+    string search = "\""+ fieldName +"\": ";
+    size_t start = input.find(search) + search.length();
+    size_t end = input.find(",", start);
+    string output = input.substr(start, end - start);
+    if (output[0] == '\"')
+    {
+        output.erase(output.begin());
+        output.pop_back();
+    }
+
+    return output;
+}
+
 int main(int argc, char* argv[]) {
     if (argc != 2) {
         cout << "Usage: " << argv[0] << " <GitHub username>" << endl;
@@ -40,6 +55,10 @@ int main(int argc, char* argv[]) {
 
     // Retrieve GitHub user information
     string githubInfo = getGitHubUser(username);
+    std::cout << githubInfo;
+    string name = extractFieldValueBetter(githubInfo, "name");
+    string publicRepos = extractFieldValueBetter(githubInfo, "public_repos");
+    string id = extractFieldValueBetter(githubInfo, "id");
 
     // Parse the GitHub user information to extract the email address
     // (Assuming the email address is in the "email" field of the JSON response)
