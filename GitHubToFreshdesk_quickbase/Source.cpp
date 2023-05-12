@@ -81,14 +81,14 @@ int main(int argc, char* argv[])
     string data = retrieveDataFromGitHubAPI(username);
 
     // Parse the response
-    string name = extractFieldValue(data, "name");
-    string location = extractFieldValue(data, "location");
-    string bio = extractFieldValue(data, "bio");
+    string name = extractFieldValue(data, "login");
+    string id = extractFieldValue(data, "node_id");
+    string avatar_url = extractFieldValue(data, "avatar_url");
 
     // Print the retrieved information
     cout << "Name: " << name << endl;
-    cout << "Location: " << location << endl;
-    cout << "Bio: " << bio << endl;
+    cout << "id: " << id << endl;
+    cout << "avatar_url: " << avatar_url << endl;
 
     return 0;
 }
