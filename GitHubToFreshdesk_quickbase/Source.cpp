@@ -1,94 +1,65 @@
+#include <windows.h>
 #include <iostream>
 #include <string>
-#include <sstream>
-#include <fstream>
-#include <streambuf>
-#include <regex>
-#include <chrono>
-#include <thread>
-#include <cstdlib>
-#include <Windows.h>
 
 using namespace std;
 
-string retrieveDataFromGitHubAPI(const string& username) {
-    // Set up the URL to retrieve user information
-    string url = "https://api.github.com/users/" + username;
-
-    // Set up the curl command to retrieve user information
-    string curlCmd = "curl -s -H \"Accept: application/vnd.github.v3+json\" \"" + url + "\"";
-
-    // Create a pipe to capture the output of the curl command
-    SECURITY_ATTRIBUTES sa;
-    sa.nLength = sizeof(SECURITY_ATTRIBUTES);
-    sa.bInheritHandle = TRUE;
-    sa.lpSecurityDescriptor = NULL;
-    HANDLE pipeRead, pipeWrite;
-    if (!CreatePipe(&pipeRead, &pipeWrite, &sa, 0)) {
-        return "";
+string getGitHubUser(string username) {
+    string command = "curl -s https://api.github.com/users/" + username;
+    FILE* pipe = _popen(command.c_str(), "r");
+    if (!pipe) return "ERROR";
+    char buffer[128];
+    string result = "";
+    while (!feof(pipe)) {
+        if (fgets(buffer, 128, pipe) != NULL)
+            result += buffer;
     }
-
-    // Set up the process information for the curl command
-    STARTUPINFOA si;
-    PROCESS_INFORMATION pi;
-    ZeroMemory(&si, sizeof(si));
-    si.cb = sizeof(si);
-    si.hStdError = pipeWrite;
-    si.hStdOutput = pipeWrite;
-    si.dwFlags |= STARTF_USESTDHANDLES;
-    ZeroMemory(&pi, sizeof(pi));
-
-    // Start the curl process and wait for it to finish
-    if (!CreateProcessA(NULL, (LPSTR)curlCmd.c_str(), NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi)) {
-        return "";
-    }
-    WaitForSingleObject(pi.hProcess, INFINITE);
-
-    // Read the output of the curl command from the pipe
-    CloseHandle(pipeWrite);
-    string output;
-    char buffer[256];
-    DWORD bytesRead;
-    while (ReadFile(pipeRead, buffer, sizeof(buffer), &bytesRead, NULL) && bytesRead != 0) {
-        output.append(buffer, bytesRead);
-    }
-    CloseHandle(pipeRead);
-
-    return output;
+    _pclose(pipe);
+    return result;
 }
 
-string extractFieldValue(const string& input, const string& fieldName) {
-    regex pattern("\"" + fieldName + "\": ?\"(.+?)\"");
-    smatch match;
-    if (regex_search(input, match, pattern)) {
-        return match[1];
-    }
-    else {
-        return "";
-    }
-}
-
-int main(int argc, char* argv[])
-{
-    // Check if a username was provided
-    if (argc < 2) {
-        cout << "Please provide a username as a command line argument." << endl;
+int main(int argc, char* argv[]) {
+    if (argc != 2) {
+        cout << "Usage: " << argv[0] << " <GitHub username>" << endl;
         return 1;
     }
 
-    // Retrieve user information from GitHub API
     string username = argv[1];
-    string data = retrieveDataFromGitHubAPI(username);
 
-    // Parse the response
-    string name = extractFieldValue(data, "login");
-    string id = extractFieldValue(data, "node_id");
-    string avatar_url = extractFieldValue(data, "avatar_url");
+    // Retrieve GitHub user information
+    string githubInfo = getGitHubUser(username);
 
-    // Print the retrieved information
-    cout << "Name: " << name << endl;
-    cout << "id: " << id << endl;
-    cout << "avatar_url: " << avatar_url << endl;
+    // Parse the GitHub user information to extract the email address
+    // (Assuming the email address is in the "email" field of the JSON response)
+    size_t emailStart = githubInfo.find("\"email\": \"") + 10;
+    size_t emailEnd = githubInfo.find("\",", emailStart);
+    string email = githubInfo.substr(emailStart, emailEnd - emailStart);
+
+    // Create the JSON payload for the new contact
+    string payload = "{\"name\": \"" + username + "\", \"email\": \"" + email + "\"}";
+
+    // Send the HTTP request to create the new contact
+    string url = "https://yourcompany.freshdesk.com/api/v2/contacts";
+    string FRESHDESK_TOKEN = "api-key";
+    string command = "curl -s -X POST -u \"" + FRESHDESK_TOKEN + "\" -H \"Content-Type: application/json\" -d '" + payload + "' \"" + url + "\"";
+    FILE* pipe = _popen(command.c_str(), "r");
+    if (!pipe) return 1;
+    char buffer[128];
+    string result = "";
+    while (!feof(pipe)) {
+        if (fgets(buffer, 128, pipe) != NULL)
+            result += buffer;
+    }
+    _pclose(pipe);
+
+    // Check if the HTTP request was successful
+    if (result.find("\"status\": \"created\"") == string::npos) {
+        cout << "Error: " << result << endl;
+        return 1;
+    }
+
+    cout << "Contact created successfully." << endl;
 
     return 0;
 }
+
