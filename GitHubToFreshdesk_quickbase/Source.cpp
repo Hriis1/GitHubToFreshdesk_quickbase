@@ -1,6 +1,7 @@
 #include <windows.h>
 #include <iostream>
 #include <string>
+#include <regex>
 
 using namespace std;
 
@@ -16,6 +17,17 @@ string getGitHubUser(string username) {
     }
     _pclose(pipe);
     return result;
+}
+
+string extractFieldValue(const string& input, const string& fieldName) {
+    regex pattern("\"" + fieldName + "\": ?\"(.+?)\"");
+    smatch match;
+    if (regex_search(input, match, pattern)) {
+        return match[1];
+    }
+    else {
+        return "";
+    }
 }
 
 int main(int argc, char* argv[]) {
