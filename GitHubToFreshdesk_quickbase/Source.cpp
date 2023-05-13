@@ -20,31 +20,6 @@ string getGitHubUser(string username, const string& authKey) {
     return result;
 }
 
-string getGitHubUserEmail(const string& username, const string& authKey)
-{
-    string command = "curl -s -H \"Authorization: token " + authKey + "\" https://api.github.com/users/" + username;
-    FILE* pipe = _popen(command.c_str(), "r");
-    if (!pipe) return "ERROR";
-    char buffer[128];
-    string result = "";
-    while (!feof(pipe)) {
-        if (fgets(buffer, 128, pipe) != NULL)
-            result += buffer;
-    }
-    _pclose(pipe);
-    // Parse the email from the API response JSON
-    size_t emailStart = result.find("\"email\":");
-    if (emailStart == string::npos) {
-        return "Email not found";
-    }
-    emailStart += 8; // length of "\"email\":"
-    size_t emailEnd = result.find(",", emailStart);
-    if (emailEnd == string::npos) {
-        return "Email not found";
-    }
-    return result.substr(emailStart, emailEnd - emailStart);
-}
-
 string extractFieldValue(const string& input, const string& fieldName) {
     regex pattern("\"" + fieldName + "\": ?\"(.+?)\"");
     smatch match;
