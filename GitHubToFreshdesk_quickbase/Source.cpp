@@ -57,15 +57,18 @@ int main(int argc, char* argv[]) {
     // Retrieve GitHub user information
     string githubInfo = getGitHubUser(username);
     std::cout << githubInfo;
+    
+    // Parse the GitHub user information to extract the email address
+    // (Assuming the email address is in the "email" field of the JSON response)
     string name = extractFieldValueBetter(githubInfo, "name");
     string publicRepos = extractFieldValueBetter(githubInfo, "public_repos");
     string id = extractFieldValueBetter(githubInfo, "id");
-
-    // Parse the GitHub user information to extract the email address
-    // (Assuming the email address is in the "email" field of the JSON response)
-    size_t emailStart = githubInfo.find("\"email\": \"") + 10;
-    size_t emailEnd = githubInfo.find("\",", emailStart);
-    string email = githubInfo.substr(emailStart, emailEnd - emailStart);
+    string email = extractFieldValueBetter(githubInfo, "email");
+    //this code is just for testing in case the given github user doesn't have an email
+    if (email == "null")
+    {
+        email = "testmain@example.com";
+    }
 
     // Create the JSON payload for the new contact
     string payload = "{\"name\": \"" + username + "\", \"email\": \"" + email + "\"}";
@@ -73,7 +76,7 @@ int main(int argc, char* argv[]) {
     // Send the HTTP request to create the new contact
     string url = "https://" + freshdeskDomain + ".freshdesk.com/api/v2/contacts";
     string FRESHDESK_TOKEN = "uvKDJ2EufRJVFSxOqpy";
-    string command = "curl -s -X POST -u \"" + FRESHDESK_TOKEN + "\" -H \"Content-Type: application/json\" -d '" + payload + "' \"" + url + "\"";
+    string command = "curl -s -X POST -u \"" + FRESHDESK_TOKEN + ":X\" -H \"Content-Type: application/json\" -d '" + payload + "' \"" + url + "\"";
     FILE* pipe = _popen(command.c_str(), "r");
     if (!pipe) return 1;
     char buffer[128];
@@ -85,6 +88,7 @@ int main(int argc, char* argv[]) {
     _pclose(pipe);
 
     // Check if the HTTP request was successful
+    cout << "API response:\n" << result << endl;
     if (result.find("\"status\": \"created\"") == string::npos) {
         cout << "Error: " << result << endl;
         return 1;
