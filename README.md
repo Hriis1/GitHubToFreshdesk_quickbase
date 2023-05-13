@@ -1,5 +1,5 @@
 # GitHubToFreshdesk_quickbase
-The code is in the GitHubToFreshdeskDev1
+The code is in the GitHubToFreshdeskDev1 branch.
 In order to run the first you must give it a GitHub id and a Freshdesk subdomain as parameters.
 Then you will be required to input the authorization key of the GitHub account.
 Then there are two options:
