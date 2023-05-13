@@ -20,17 +20,6 @@ string getGitHubUser(string username, const string& authKey) {
     return result;
 }
 
-string extractFieldValue(const string& input, const string& fieldName) {
-    regex pattern("\"" + fieldName + "\": ?\"(.+?)\"");
-    smatch match;
-    if (regex_search(input, match, pattern)) {
-        return match[1];
-    }
-    else {
-        return "";
-    }
-}
-
 string extractFieldValueBetter(const string& input, const string& fieldName)
 {
     string search = "\""+ fieldName +"\": ";
@@ -78,18 +67,6 @@ int main(int argc, char* argv[]) {
     // Send the HTTP request to create the new contact
     string url = "https://" + freshdeskDomain + ".freshdesk.com/api/v2/contacts";
     string FRESHDESK_TOKEN = "uvKDJ2EufRJVFSxOqpy";
-    //string command = "curl -u " + FRESHDESK_TOKEN + ":X -H \"Content-Type: application/json\" -X POST -d '{ \"name\" : \"" + name + "\", \"email\" : \"" + email + "\"}' 'https://" + freshdeskDomain + ".freshdesk.com/api/v2/contacts'";
-    //string command = "curl -u uvKDJ2EufRJVFSxOqpy -H \"Content - Type: application / json\" -X POST -d ‘{ “name” : “Clark Gosho”, “email” : “superman@freshdesk.com”, “custom_fields” : { “department” : “Superhero” } }’ 'https://test12334.freshdesk.com/api/v2/contacts’";
-    //string command = "curl -v -u uvKDJ2EufRJVFSxOqpy:X -H 'Content-Type: application/json' -X POST -d '{ \"name\":\"Super Man\", \"email\":\"superman@freshdesk.com\"}' 'https://test12334.freshdesk.com/api/v2/contacts'";
-    //string command = "curl -v -u uvKDJ2EufRJVFSxOqpy:X -H \"Content-Type: application/json\" -X POST -d '{ \"name\":\"Super Man\", \"email\":\"superman@freshdesk.com\"}' 'https://test12334.freshdesk.com/api/v2/contacts'";
-    //string command = "curl -v -u uvKDJ2EufRJVFSxOqpy:X -H \"Content-Type: application/json\" -d '{ \"name\":\"Super Man\", \"email\":\"superman@freshdesk.com\" }' 'https://test12334.freshdesk.com/api/v2/contacts'";
-    //string command = "curl -v -u uvKDJ2EufRJVFSxOqpy:X -H \"Content-Type: application/json\" -d '{ \"name\":\"Super Man\", \"email\":\"superman@freshdesk.com\" }' 'https://test12334.freshdesk.com/api/v2/contacts.json'";
-    //string command = "curl -v -u uvKDJ2EufRJVFSxOqpy:X -H \"Content-Type: application/json\" -d '{ \"name\":\"Super Man\", \"email\":\"superman@freshdesk.com\" }' 'https://test12334.freshdesk.com'";
-    //string command = R"(curl -v -u uvKDJ2EufRJVFSxOqpy:X -H "Content-Type: application/json" -d '{ "name":"Super Man", "email":"superman@freshdesk.com" }' 'https://test12334.freshdesk.com/api/v2/contacts')";
-    //string command = R"(curl -v -u uvKDJ2EufRJVFSxOqpy:X -H "Content-Type: application/json" -d "{"name":"Super Man", "email":"superman@freshdesk.com"}" "https://test12334.freshdesk.com/api/v2/contacts")";
-    
-    //string commandTest = R"(curl -v -u uvKDJ2EufRJVFSxOqpy:X -H "Content-Type: application/json" -d "{\"name\":\"Spider Man\", \"email\":\"Spiderman@freshdesk.com\"}" "https://test12334.freshdesk.com/api/v2/contacts")";
-
 
     bool addTUpdateF =true;
     std::cout << "1 for add 0 for update" << std::endl;
