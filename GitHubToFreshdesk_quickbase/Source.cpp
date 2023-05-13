@@ -112,8 +112,6 @@ int main(int argc, char* argv[]) {
     }
     else
     {
-        email = "DocOc@octo.com";
-        name = "Oto";
         string contactId = "0";
         std::cout << "Enter the contact Id of the contact you want to update" << std::endl;
         std::cin >> contactId;
