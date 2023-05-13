@@ -5,8 +5,9 @@
 
 using namespace std;
 
-string getGitHubUser(string username) {
-    string command = "curl -s https://api.github.com/users/" + username;
+string getGitHubUser(string username, const string& authKey) {
+    //string command = "curl -s https://api.github.com/users/" + username;
+    string command = "curl -s -H \"Authorization: token " + authKey + "\" https://api.github.com/users/" + username;
     FILE* pipe = _popen(command.c_str(), "r");
     if (!pipe) return "ERROR";
     char buffer[128];
@@ -17,6 +18,31 @@ string getGitHubUser(string username) {
     }
     _pclose(pipe);
     return result;
+}
+
+string getGitHubUserEmail(const string& username, const string& authKey)
+{
+    string command = "curl -s -H \"Authorization: token " + authKey + "\" https://api.github.com/users/" + username;
+    FILE* pipe = _popen(command.c_str(), "r");
+    if (!pipe) return "ERROR";
+    char buffer[128];
+    string result = "";
+    while (!feof(pipe)) {
+        if (fgets(buffer, 128, pipe) != NULL)
+            result += buffer;
+    }
+    _pclose(pipe);
+    // Parse the email from the API response JSON
+    size_t emailStart = result.find("\"email\":");
+    if (emailStart == string::npos) {
+        return "Email not found";
+    }
+    emailStart += 8; // length of "\"email\":"
+    size_t emailEnd = result.find(",", emailStart);
+    if (emailEnd == string::npos) {
+        return "Email not found";
+    }
+    return result.substr(emailStart, emailEnd - emailStart);
 }
 
 string extractFieldValue(const string& input, const string& fieldName) {
@@ -45,6 +71,8 @@ string extractFieldValueBetter(const string& input, const string& fieldName)
     return output;
 }
 
+
+
 int main(int argc, char* argv[]) {
     if (argc != 3) {
         cout << "Usage: " << argv[0] << " <GitHub username> <Freshdesk domain>" << endl;
@@ -55,18 +83,18 @@ int main(int argc, char* argv[]) {
     string freshdeskDomain = argv[2];
 
     // Retrieve GitHub user information
-    string githubInfo = getGitHubUser(username);
-   //std::cout << githubInfo;
+    string githubInfo = getGitHubUser(username,"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");
+    std::cout << githubInfo;
     
     // Parse the GitHub user information
     string name = extractFieldValueBetter(githubInfo, "name");
     string publicRepos = extractFieldValueBetter(githubInfo, "public_repos");
     string id = extractFieldValueBetter(githubInfo, "id");
     string email = extractFieldValueBetter(githubInfo, "email");
-    //this code is just for testing in case the given github user doesn't have an email
+    //this code is just for testing in case the given github user doesn't have a public email
     if (email == "null")
     {
-        email = "testmain@example.com";
+        email = "noemail@example.com";
     }
 
     // Send the HTTP request to create the new contact
