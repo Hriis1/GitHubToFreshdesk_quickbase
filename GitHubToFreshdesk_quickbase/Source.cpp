@@ -86,7 +86,9 @@ int main(int argc, char* argv[]) {
     //string command = "curl -v -u uvKDJ2EufRJVFSxOqpy:X -H \"Content-Type: application/json\" -d '{ \"name\":\"Super Man\", \"email\":\"superman@freshdesk.com\" }' 'https://test12334.freshdesk.com'";
     //string command = R"(curl -v -u uvKDJ2EufRJVFSxOqpy:X -H "Content-Type: application/json" -d '{ "name":"Super Man", "email":"superman@freshdesk.com" }' 'https://test12334.freshdesk.com/api/v2/contacts')";
     //string command = R"(curl -v -u uvKDJ2EufRJVFSxOqpy:X -H "Content-Type: application/json" -d "{"name":"Super Man", "email":"superman@freshdesk.com"}" "https://test12334.freshdesk.com/api/v2/contacts")";
-    string command = R"(curl -v -u uvKDJ2EufRJVFSxOqpy:X -H "Content-Type: application/json" -d "{\"name\":\"Spider Man\", \"email\":\"Spiderman@freshdesk.com\"}" "https://test12334.freshdesk.com/api/v2/contacts")";
+    
+    //string commandTest = R"(curl -v -u uvKDJ2EufRJVFSxOqpy:X -H "Content-Type: application/json" -d "{\"name\":\"Spider Man\", \"email\":\"Spiderman@freshdesk.com\"}" "https://test12334.freshdesk.com/api/v2/contacts")";
+    string command = R"(curl -v -u )" + FRESHDESK_TOKEN + R"(:X -H "Content-Type: application/json" -d "{\"name\":\")" + name + R"(\", \"email\":\")" + email + R"(\"}" "https://)" + freshdeskDomain + R"(.freshdesk.com/api/v2/contacts")";
 
 
 
