@@ -76,7 +76,20 @@ int main(int argc, char* argv[]) {
     // Send the HTTP request to create the new contact
     string url = "https://" + freshdeskDomain + ".freshdesk.com/api/v2/contacts";
     string FRESHDESK_TOKEN = "uvKDJ2EufRJVFSxOqpy";
-    string command = "curl -s -X POST -u \"" + FRESHDESK_TOKEN + ":X\" -H \"Content-Type: application/json\" -d '" + payload + "' \"" + url + "\"";
+    string command1 = "curl -s -X POST -u \"" + FRESHDESK_TOKEN + ":X\" -H \"Content-Type: application/json\" -d '" + payload + "' \"" + url + "\"";
+    //string command = "curl -u " + FRESHDESK_TOKEN + ":X -H \"Content-Type: application/json\" -X POST -d '{ \"name\" : \"" + name + "\", \"email\" : \"" + email + "\"}' 'https://" + freshdeskDomain + ".freshdesk.com/api/v2/contacts'";
+    //string command = "curl -u uvKDJ2EufRJVFSxOqpy -H \"Content - Type: application / json\" -X POST -d ‘{ “name” : “Clark Gosho”, “email” : “superman@freshdesk.com”, “custom_fields” : { “department” : “Superhero” } }’ 'https://test12334.freshdesk.com/api/v2/contacts’";
+    //string command = "curl -v -u uvKDJ2EufRJVFSxOqpy:X -H 'Content-Type: application/json' -X POST -d '{ \"name\":\"Super Man\", \"email\":\"superman@freshdesk.com\"}' 'https://test12334.freshdesk.com/api/v2/contacts'";
+    //string command = "curl -v -u uvKDJ2EufRJVFSxOqpy:X -H \"Content-Type: application/json\" -X POST -d '{ \"name\":\"Super Man\", \"email\":\"superman@freshdesk.com\"}' 'https://test12334.freshdesk.com/api/v2/contacts'";
+    //string command = "curl -v -u uvKDJ2EufRJVFSxOqpy:X -H \"Content-Type: application/json\" -d '{ \"name\":\"Super Man\", \"email\":\"superman@freshdesk.com\" }' 'https://test12334.freshdesk.com/api/v2/contacts'";
+    //string command = "curl -v -u uvKDJ2EufRJVFSxOqpy:X -H \"Content-Type: application/json\" -d '{ \"name\":\"Super Man\", \"email\":\"superman@freshdesk.com\" }' 'https://test12334.freshdesk.com/api/v2/contacts.json'";
+    //string command = "curl -v -u uvKDJ2EufRJVFSxOqpy:X -H \"Content-Type: application/json\" -d '{ \"name\":\"Super Man\", \"email\":\"superman@freshdesk.com\" }' 'https://test12334.freshdesk.com'";
+    //string command = R"(curl -v -u uvKDJ2EufRJVFSxOqpy:X -H "Content-Type: application/json" -d '{ "name":"Super Man", "email":"superman@freshdesk.com" }' 'https://test12334.freshdesk.com/api/v2/contacts')";
+    //string command = R"(curl -v -u uvKDJ2EufRJVFSxOqpy:X -H "Content-Type: application/json" -d "{"name":"Super Man", "email":"superman@freshdesk.com"}" "https://test12334.freshdesk.com/api/v2/contacts")";
+    string command = R"(curl -v -u uvKDJ2EufRJVFSxOqpy:X -H "Content-Type: application/json" -d "{\"name\":\"Spider Man\", \"email\":\"Spiderman@freshdesk.com\"}" "https://test12334.freshdesk.com/api/v2/contacts")";
+
+
+
     FILE* pipe = _popen(command.c_str(), "r");
     if (!pipe) return 1;
     char buffer[128];
@@ -97,5 +110,6 @@ int main(int argc, char* argv[]) {
     cout << "Contact created successfully." << endl;
 
     return 0;
+
 }
 
