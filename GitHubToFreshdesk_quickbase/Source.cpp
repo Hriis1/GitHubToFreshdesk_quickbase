@@ -46,12 +46,13 @@ string extractFieldValueBetter(const string& input, const string& fieldName)
 }
 
 int main(int argc, char* argv[]) {
-    if (argc != 2) {
-        cout << "Usage: " << argv[0] << " <GitHub username>" << endl;
+    if (argc != 3) {
+        cout << "Usage: " << argv[0] << " <GitHub username> <Freshdesk domain>" << endl;
         return 1;
     }
 
     string username = argv[1];
+    string freshdeskDomain = argv[2];
 
     // Retrieve GitHub user information
     string githubInfo = getGitHubUser(username);
@@ -70,8 +71,8 @@ int main(int argc, char* argv[]) {
     string payload = "{\"name\": \"" + username + "\", \"email\": \"" + email + "\"}";
 
     // Send the HTTP request to create the new contact
-    string url = "https://yourcompany.freshdesk.com/api/v2/contacts";
-    string FRESHDESK_TOKEN = "api-key";
+    string url = "https://" + freshdeskDomain + ".freshdesk.com/api/v2/contacts";
+    string FRESHDESK_TOKEN = "uvKDJ2EufRJVFSxOqpy";
     string command = "curl -s -X POST -u \"" + FRESHDESK_TOKEN + "\" -H \"Content-Type: application/json\" -d '" + payload + "' \"" + url + "\"";
     FILE* pipe = _popen(command.c_str(), "r");
     if (!pipe) return 1;
