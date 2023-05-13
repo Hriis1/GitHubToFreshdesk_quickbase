@@ -56,10 +56,9 @@ int main(int argc, char* argv[]) {
 
     // Retrieve GitHub user information
     string githubInfo = getGitHubUser(username);
-    std::cout << githubInfo;
+   //std::cout << githubInfo;
     
-    // Parse the GitHub user information to extract the email address
-    // (Assuming the email address is in the "email" field of the JSON response)
+    // Parse the GitHub user information
     string name = extractFieldValueBetter(githubInfo, "name");
     string publicRepos = extractFieldValueBetter(githubInfo, "public_repos");
     string id = extractFieldValueBetter(githubInfo, "id");
@@ -70,13 +69,9 @@ int main(int argc, char* argv[]) {
         email = "testmain@example.com";
     }
 
-    // Create the JSON payload for the new contact
-    string payload = "{\"name\": \"" + username + "\", \"email\": \"" + email + "\"}";
-
     // Send the HTTP request to create the new contact
     string url = "https://" + freshdeskDomain + ".freshdesk.com/api/v2/contacts";
     string FRESHDESK_TOKEN = "uvKDJ2EufRJVFSxOqpy";
-    string command1 = "curl -s -X POST -u \"" + FRESHDESK_TOKEN + ":X\" -H \"Content-Type: application/json\" -d '" + payload + "' \"" + url + "\"";
     //string command = "curl -u " + FRESHDESK_TOKEN + ":X -H \"Content-Type: application/json\" -X POST -d '{ \"name\" : \"" + name + "\", \"email\" : \"" + email + "\"}' 'https://" + freshdeskDomain + ".freshdesk.com/api/v2/contacts'";
     //string command = "curl -u uvKDJ2EufRJVFSxOqpy -H \"Content - Type: application / json\" -X POST -d ‘{ “name” : “Clark Gosho”, “email” : “superman@freshdesk.com”, “custom_fields” : { “department” : “Superhero” } }’ 'https://test12334.freshdesk.com/api/v2/contacts’";
     //string command = "curl -v -u uvKDJ2EufRJVFSxOqpy:X -H 'Content-Type: application/json' -X POST -d '{ \"name\":\"Super Man\", \"email\":\"superman@freshdesk.com\"}' 'https://test12334.freshdesk.com/api/v2/contacts'";
@@ -88,28 +83,64 @@ int main(int argc, char* argv[]) {
     //string command = R"(curl -v -u uvKDJ2EufRJVFSxOqpy:X -H "Content-Type: application/json" -d "{"name":"Super Man", "email":"superman@freshdesk.com"}" "https://test12334.freshdesk.com/api/v2/contacts")";
     
     //string commandTest = R"(curl -v -u uvKDJ2EufRJVFSxOqpy:X -H "Content-Type: application/json" -d "{\"name\":\"Spider Man\", \"email\":\"Spiderman@freshdesk.com\"}" "https://test12334.freshdesk.com/api/v2/contacts")";
-    string command = R"(curl -v -u )" + FRESHDESK_TOKEN + R"(:X -H "Content-Type: application/json" -d "{\"name\":\")" + name + R"(\", \"email\":\")" + email + R"(\"}" "https://)" + freshdeskDomain + R"(.freshdesk.com/api/v2/contacts")";
 
 
+    bool addTUpdateF =true;
+    std::cout << "1 for add 0 for update" << std::endl;
+    std::cin >> addTUpdateF;
+    if (addTUpdateF) {
+        string command = R"(curl -v -u )" + FRESHDESK_TOKEN + R"(:X -H "Content-Type: application/json" -d "{\"name\":\")" + name + R"(\", \"email\":\")" + email + R"(\"}" "https://)" + freshdeskDomain + R"(.freshdesk.com/api/v2/contacts")";
 
-    FILE* pipe = _popen(command.c_str(), "r");
-    if (!pipe) return 1;
-    char buffer[128];
-    string result = "";
-    while (!feof(pipe)) {
-        if (fgets(buffer, 128, pipe) != NULL)
-            result += buffer;
+        FILE* pipe = _popen(command.c_str(), "r");
+        if (!pipe) return 1;
+        char buffer[128];
+        string result = "";
+        while (!feof(pipe)) {
+            if (fgets(buffer, 128, pipe) != NULL)
+                result += buffer;
+        }
+        _pclose(pipe);
+
+        // Check if the HTTP request was successful
+        cout << "API response:\n" << result << endl;
+        if (result.find("\"status\": \"created\"") == string::npos) {
+            cout << "Error: " << result << endl;
+            return 1;
+        }
+
+        cout << "Contact created successfully." << endl;
     }
-    _pclose(pipe);
+    else
+    {
+        email = "DocOc@octo.com";
+        name = "Oto";
+        string contactId = "0";
+        std::cout << "Enter the contact Id of the contact you want to update" << std::endl;
+        std::cin >> contactId;
+        string command = R"(curl -v -u )" + FRESHDESK_TOKEN + R"(:X -H "Content-Type: application/json" -d "{\"name\":\")" + name + R"(\", \"email\":\")" + email + R"(\"}" -X PUT "https://)" + freshdeskDomain + R"(.freshdesk.com/api/v2/contacts/)" + contactId;
 
-    // Check if the HTTP request was successful
-    cout << "API response:\n" << result << endl;
-    if (result.find("\"status\": \"created\"") == string::npos) {
-        cout << "Error: " << result << endl;
-        return 1;
+        FILE* pipe = _popen(command.c_str(), "r");
+        if (!pipe) return 1;
+        char buffer[128];
+        string result = "";
+        while (!feof(pipe)) {
+            if (fgets(buffer, 128, pipe) != NULL)
+                result += buffer;
+        }
+        _pclose(pipe);
+
+        // Check if the HTTP request was successful
+        cout << "API response:\n" << result << endl;
+        if (result.find("\"status\": \"success\"") == string::npos) {
+            cout << "Error: " << result << endl;
+            return 1;
+        }
+
+        cout << "Contact updated successfully." << endl;
+
+        return 0;
+
     }
-
-    cout << "Contact created successfully." << endl;
 
     return 0;
 
