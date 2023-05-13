@@ -58,7 +58,10 @@ int main(int argc, char* argv[]) {
     string freshdeskDomain = argv[2];
 
     // Retrieve GitHub user information
-    string githubInfo = getGitHubUser(username,"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");
+    std::cout << "Enter a GitHub authorization key: " << std::endl;
+    string gitHubAuthKey = "";
+    std::cin >> gitHubAuthKey;
+    string githubInfo = getGitHubUser(username,gitHubAuthKey);
     std::cout << githubInfo;
     
     // Parse the GitHub user information
