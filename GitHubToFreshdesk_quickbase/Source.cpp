@@ -21,7 +21,7 @@ string getGitHubUser(string username, const string& authKey) {
 
 string extractFieldValueBetter(const string& input, const string& fieldName)
 {
-    string search = "\""+ fieldName +"\": ";
+    string search = "\"" + fieldName + "\": ";
     size_t start = input.find(search) + search.length();
     size_t end = input.find(",", start);
     string output = input.substr(start, end - start);
@@ -49,9 +49,9 @@ int main(int argc, char* argv[]) {
     std::cout << "Enter a GitHub authorization key: " << std::endl;
     string gitHubAuthKey = "";
     std::cin >> gitHubAuthKey;
-    string githubInfo = getGitHubUser(username,gitHubAuthKey);
+    string githubInfo = getGitHubUser(username, gitHubAuthKey);
     std::cout << githubInfo;
-    
+
     // Parse the GitHub user information
     string name = extractFieldValueBetter(githubInfo, "name");
     string publicRepos = extractFieldValueBetter(githubInfo, "public_repos");
@@ -67,7 +67,7 @@ int main(int argc, char* argv[]) {
     string url = "https://" + freshdeskDomain + ".freshdesk.com/api/v2/contacts";
     string FRESHDESK_TOKEN = "uvKDJ2EufRJVFSxOqpy";
 
-    bool addTUpdateF =true;
+    bool addTUpdateF = true;
     std::cout << "1 for add 0 for update" << std::endl;
     std::cin >> addTUpdateF;
     if (addTUpdateF) {
@@ -121,15 +121,6 @@ int main(int argc, char* argv[]) {
         return 0;
 
     }
-
-    string name = extractFieldValue(data, "login");
-    string id = extractFieldValue(data, "node_id");
-    string avatar_url = extractFieldValue(data, "avatar_url");
-
-    // Print the retrieved information
-    cout << "Name: " << name << endl;
-    cout << "id: " << id << endl;
-    cout << "avatar_url: " << avatar_url << endl;
 
     return 0;
 
